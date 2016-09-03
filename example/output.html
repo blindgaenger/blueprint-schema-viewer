@@ -1,0 +1,249 @@
+<DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <title>Blueprint Schema Viewer</title>
+    <style>
+      .schema {
+        margin: 1em 0.5em;
+        padding: 1em 0;
+        font-family: monospace;
+        font-size: 1.1em;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+      }
+
+      .element {
+        line-height: 1.3em;
+        padding: 0 1em;
+      }
+
+      .name,
+      .type,
+      .required,
+      .example,
+      .description {
+        display: inline-block;
+      }
+      .type,
+      .example,
+      .description {
+        margin-left: 0.5em;
+      }
+
+
+      .name {
+        font-weight: bold;
+      }
+      .name::after {
+        content: ":";
+      }
+
+      .type {
+        color: blue;
+      }
+
+      .description {
+        font-style: italic;
+        color: gray;
+      }
+      .description::before {
+        content: "- ";
+      }
+
+      .required {
+        color: red;
+      }
+      .required::after {
+        content: '*';
+      }
+
+      .example {
+        color: green;
+      }
+      .example::before {
+        content: "= ";
+      }
+
+      .string .example::before {
+        content: "= \"";
+      }
+      .string .example::after {
+        content: "\"";
+      }
+
+      .line {
+      }
+      .line::before {
+        content: "•";
+        margin-right: 0.5em;
+      }
+
+      .collapser {
+        cursor: pointer;
+      }
+      .collapser::before {
+        content: "▾";
+      }
+
+      .collapsed .collapser::before {
+        content: "▸";
+      }
+      .collapsed .collapsible {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="target"></div>
+
+    <script>
+      const schemas = [
+  {
+    "name": "ThingsResponse",
+    "type": "object",
+    "typeDisplay": "{things}",
+    "properties": [
+      {
+        "name": "things",
+        "type": "array",
+        "typeDisplay": "[Thing]",
+        "required": true,
+        "properties": [
+          {
+            "name": "Thing",
+            "type": "object",
+            "typeDisplay": "{id, name}",
+            "properties": [
+              {
+                "name": "id",
+                "type": "number",
+                "typeDisplay": "number",
+                "description": "Some identifier",
+                "required": true,
+                "example": 1234
+              },
+              {
+                "name": "name",
+                "type": "string",
+                "typeDisplay": "string",
+                "example": "Whoop"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ThingResponse",
+    "type": "object",
+    "typeDisplay": "{id, name, location, color}",
+    "properties": [
+      {
+        "name": "id",
+        "type": "number",
+        "typeDisplay": "number",
+        "description": "Some identifier",
+        "required": true,
+        "example": 1234
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "typeDisplay": "string",
+        "example": "Whoop"
+      },
+      {
+        "name": "location",
+        "type": "array",
+        "typeDisplay": "[number]",
+        "required": true,
+        "example": 8.40512,
+        "properties": [
+          {
+            "type": "number",
+            "typeDisplay": "number",
+            "example": 8.40512
+          },
+          {
+            "type": "number",
+            "typeDisplay": "number",
+            "example": 49.00954
+          }
+        ]
+      },
+      {
+        "name": "color",
+        "type": "enum",
+        "typeDisplay": "enum",
+        "description": "some common colors",
+        "example": "RED",
+        "properties": [
+          {
+            "type": "string",
+            "typeDisplay": "string",
+            "example": "RED"
+          },
+          {
+            "type": "string",
+            "typeDisplay": "string",
+            "example": "GREEN"
+          },
+          {
+            "type": "string",
+            "typeDisplay": "string",
+            "example": "BLUE"
+          }
+        ]
+      }
+    ]
+  }
+]
+
+      function appendChild(parent, className, innerText) {
+        const child = document.createElement('div');
+        child.className = className
+        child.innerText = innerText
+        parent.appendChild(child)
+        return child
+      }
+
+      function renderSchema(parent, schema) {
+        const element = appendChild(parent, `element ${schema.type}`, '')
+
+        const elLine = appendChild(element, 'line', '')
+        if (schema.name) appendChild(elLine, 'name', schema.name)
+        if (schema.typeDisplay) appendChild(elLine, 'type', schema.typeDisplay)
+        if (schema.required) appendChild(elLine, 'required', '')
+        if (schema.example) appendChild(elLine, 'example', schema.example)
+        if (schema.description) appendChild(elLine, 'description', schema.description)
+
+        const elProperties = appendChild(element, 'properties', '')
+        if (schema.properties) {
+          schema.properties.forEach(function(property) {
+            renderSchema(elProperties, property)
+          })
+        }
+
+        if (elProperties.childElementCount > 0) {
+          element.classList.add('collapsed')
+          elLine.classList.add('collapser')
+          elProperties.classList.add('collapsible')
+          elLine.addEventListener('click', function(event) {
+            event.stopPropagation()
+            element.classList.toggle('collapsed')
+          }, false);
+        }
+
+        return element
+      }
+
+      const target = document.querySelector('#target');
+      schemas.forEach(function(schema, index) {
+        const elSchema = appendChild(target, 'schema', '')
+        renderSchema(elSchema, schema)
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+FORMAT: 1A
+
+# blueprint-schema-viewer
+
+Some example routes with data structures.
+
+## Group Things
+
+### Things [GET /things]
+
++ Response
+
+  + Attributes (ThingsResponse)
+
+### Thing [GET /thing/:id]
+
++ Response
+
+  + Attributes (ThingResponse)
+
+## Data Structures
+
+### ThingsResponse
++ things: (array[Thing], required)
+
+### Thing
++ id: 1234 (number, required) - Some identifier
++ name: `Whoop` (string)
+
+### ThingResponse
++ Include Thing
++ location (Location, required)
++ color (enum) - some common colors
+  + RED (string)
+  + GREEN (string)
+  + BLUE (string)
+
+### Location (array)
++ `8.40512` (number)
++ `49.00954` (number)

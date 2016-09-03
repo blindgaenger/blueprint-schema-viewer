@@ -1,0 +1,21 @@
+{
+  "name": "blueprint-schema-viewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "drafter": "^1.0.0",
+    "eidolon": "^1.5.0",
+    "mustache": "^2.2.1"
+  },
+  "bin": {
+    "blueprint-schema-viewer": "./index.js"
+  }
+}
