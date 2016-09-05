@@ -3,6 +3,7 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
 const Promise = require('bluebird')
 const drafter = require('drafter')
 const eidolon = require('eidolon')
@@ -217,7 +218,7 @@ if (args.length != 2) {
 }
 const inputFile = args[0]
 const outputFile = args[1]
-const templateFile = 'template.html.mustache'
+const templateFile = path.join(__dirname, 'template.html.mustache')
 
 Promise.resolve(inputFile)
   .then(readFile)
@@ -230,5 +231,3 @@ Promise.resolve(inputFile)
   .then(writeFile(outputFile))
   .then(console.log)
   .catch(console.error)
-
-
