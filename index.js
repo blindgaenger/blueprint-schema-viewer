@@ -195,13 +195,13 @@ function mapSchemas(schemas) {
   return schemas.map(mapSchema)
 }
 
-function renderTemplate(filename) {
+function renderTemplate(filename, data) {
   return (schemas) => {
-    const data = {
+    const viewData = Object.assign({}, data, {
       schemas: JSON.stringify(schemas, null, 2)
-    }
+    })
     return readFile(filename).then(template => {
-      return mustache.render(template, data);
+      return mustache.render(template, viewData);
     })
   }
 }
@@ -212,12 +212,13 @@ function printJSON(json) {
 }
 
 const args = process.argv.slice(2)
-if (args.length != 2) {
-  console.error(`usage: blueprint-schema-viewer <input.apib> <output.html>`)
+if (args.length < 2 || args.length > 3) {
+  console.error(`usage: blueprint-schema-viewer <input.apib> <output.html> [title]`)
   process.exit(2)
 }
 const inputFile = args[0]
 const outputFile = args[1]
+const title = args[2] || 'Blueprint Schema Viewer'
 const templateFile = path.join(__dirname, 'template.html.mustache')
 
 Promise.resolve(inputFile)
@@ -227,7 +228,7 @@ Promise.resolve(inputFile)
   .then(dereferenceDataStructures)
   .then(mapSchemas)
   // .then(printJSON)
-  .then(renderTemplate(templateFile))
+  .then(renderTemplate(templateFile, {title}))
   .then(writeFile(outputFile))
   .then(console.log)
   .catch(console.error)

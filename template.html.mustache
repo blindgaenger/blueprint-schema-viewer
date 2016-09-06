@@ -2,10 +2,23 @@
 <html>
   <head>
     <meta charset="utf8">
-    <title>Blueprint Schema Viewer</title>
+    <title>{{title}}</title>
     <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        padding: 1em;
+        font-family: sans-serif;
+      }
+
+      .title {
+        font-weight: normal;
+      }
+
       .schema {
-        margin: 1em 0.5em;
+        margin: 1em 0;
         padding: 1em 0;
         font-family: monospace;
         font-size: 1.1em;
@@ -95,7 +108,8 @@
     </style>
   </head>
   <body>
-    <div id="target"></div>
+    <h1 class="title">{{title}}</h1>
+    <div id="schemas"></div>
 
     <script>
       const schemas = {{{schemas}}}
@@ -126,7 +140,7 @@
         }
 
         if (elProperties.childElementCount > 0) {
-          element.classList.add('collapsed')
+          if (schema.type === 'enum') element.classList.add('collapsed')
           elLine.classList.add('collapser')
           elProperties.classList.add('collapsible')
           elLine.addEventListener('click', function(event) {
@@ -138,9 +152,9 @@
         return element
       }
 
-      const target = document.querySelector('#target');
+      const elSchemas = document.querySelector('#schemas');
       schemas.forEach(function(schema, index) {
-        const elSchema = appendChild(target, 'schema', '')
+        const elSchema = appendChild(elSchemas, 'schema', '')
         renderSchema(elSchema, schema)
       })
     </script>
